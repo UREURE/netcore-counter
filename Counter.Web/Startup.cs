@@ -40,7 +40,7 @@ namespace Counter.Web
             // Configurar Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v2", new Info
+                c.SwaggerDoc("counter", new Info
                 {
                     Title = "Counter",
                     Version = configuracion.Version
@@ -79,7 +79,7 @@ namespace Counter.Web
             });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"/{UriPath.PREFIX}/swagger/v2/swagger.json", $"Counter {configuracion.Version}");
+                c.SwaggerEndpoint($"/{UriPath.PREFIX}/swagger/counter/swagger.json", $"Counter {configuracion.Version}");
                 c.RoutePrefix = $"{UriPath.PREFIX}/swagger";
             });
         }
