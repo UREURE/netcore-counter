@@ -1,0 +1,9 @@
+version: '3'
+services:
+  counter-web:
+    build: .
+    ports:
+      - "5010:5000"
+  redis:
+    image: "redis:alpine"
+

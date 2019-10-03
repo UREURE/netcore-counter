@@ -58,6 +58,7 @@ namespace Counter.Web
             int redisPort = configuracion.RedisPort ?? PUERTO_REDIS_DEFECTO;
             services.AddDistributedRedisCache(option =>
             {
+                option.ConfigurationOptions.Password = configuracion.RedisPassword;
                 option.Configuration = $"{configuracion.RedisHost}:{redisPort}";
                 option.InstanceName = "master";
             });
