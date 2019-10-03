@@ -4,10 +4,10 @@
     {
         int? PuertoHttp { get; set; }
         string Version { get; set; }
-        string RedisHost { get; set; }
-        int? RedisPort { get; set; }
-        string RedisUser { get; set; }
-        string RedisPassword { get; set; }
-        string RedisInstance { get; set; }
+        string Redis_Host { get; set; }
+        int? Redis_Port { get; set; }
+        string Redis_User { get; set; }
+        string Redis_Password { get; set; }
+        string Redis_Instance { get; set; }
     }
 }
