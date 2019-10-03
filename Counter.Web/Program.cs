@@ -22,8 +22,8 @@ namespace Counter.Web
                 .UseConfiguration(configurationRoot)
                 .UseKestrel(options =>
                 {
-                    if (configuracion.PuertoHttp.HasValue)
-                        options.Listen(IPAddress.Any, configuracion.PuertoHttp.Value);
+                    if (configuracion.Counter_Http_Int_Port.HasValue)
+                        options.Listen(IPAddress.Any, configuracion.Counter_Http_Int_Port.Value);
                 })
                 .UseStartup<Startup>()
                 .Build();

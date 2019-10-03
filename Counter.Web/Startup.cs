@@ -44,7 +44,7 @@ namespace Counter.Web
                 c.SwaggerDoc("counter", new Info
                 {
                     Title = "Counter",
-                    Version = configuracion.Version
+                    Version = configuracion.Counter_Version ?? "N/A"
                 });
                 string xmlFile = Path.ChangeExtension(typeof(Startup).Assembly.Location, ".xml");
                 c.IncludeXmlComments(xmlFile);
@@ -92,7 +92,7 @@ namespace Counter.Web
             });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"/{UriPath.PREFIX}/swagger/counter/swagger.json", $"Counter {configuracion.Version}");
+                c.SwaggerEndpoint($"/{UriPath.PREFIX}/swagger/counter/swagger.json", $"Counter {configuracion.Counter_Version ?? "N/A"}");
                 c.RoutePrefix = $"{UriPath.PREFIX}/swagger";
             });
         }
