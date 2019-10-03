@@ -8,11 +8,11 @@ services:
       - "${COUNTER_HTTP_EXT_PORT}:${COUNTER_HTTP_INT_PORT}"
     environment:
       - COUNTER_HTTP_INT_PORT=${COUNTER_HTTP_INT_PORT}
-      - COUNTER_VERSION=$(COUNTER_VERSION)
+      - COUNTER_VERSION=${COUNTER_VERSION}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_INSTANCE=${REDIS_INSTANCE}
   redis:
-    image: "redis:$(REDIS_IMAGE_TAG)"
+    image: "redis:${REDIS_IMAGE_TAG}"
     command: "redis-server --requirepass ${REDIS_PASSWORD}"
