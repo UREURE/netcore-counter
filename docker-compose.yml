@@ -2,6 +2,8 @@ version: '3'
 services:
   netcore-counter:
     build: .
+    depends_on:
+      - redis
     ports:
       - "5010:5000"
   redis:
