@@ -11,7 +11,7 @@ COPY Counter.Web/. ./Counter.Web/
 WORKDIR /app/Counter.Web
 RUN dotnet publish -c Release
 
-# Copiar la aplicaci�n generada a su contenedor final
+# Copiar la aplicación generada a su imagen final
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS runtime
 WORKDIR /app
 COPY --from=build /app/Counter.Web/publish/netcoreapp2.2/publish ./

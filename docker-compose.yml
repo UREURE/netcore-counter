@@ -3,9 +3,9 @@ services:
   netcore-counter:
     build: .
     depends_on:
-      - redis
+      - "redis"
     ports:
       - "5010:5000"
   redis:
-    image: "redis:alpine"
-
+    image: "redis:5.0.6-alpine"
+    command: redis-server --requirepass password
