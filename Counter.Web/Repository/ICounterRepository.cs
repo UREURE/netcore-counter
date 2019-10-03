@@ -17,6 +17,6 @@ namespace Counter.Web.Repository
         ///
         /// </summary>
         /// <returns></returns>
-        Task<bool> IncrementarContador();
+        Task<int> IncrementarContador();
     }
 }

@@ -66,13 +66,13 @@ namespace Counter.Web.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("incrementar")]
-        public async Task<ActionResult<bool>> Incrementar()
+        public async Task<ActionResult<int>> Incrementar()
         {
             try
             {
                 logger.Trace($"Llamado método Incrementar().");
-                bool resultado = await counterRepository.IncrementarContador();
-                return Ok(resultado);
+                int contador = await counterRepository.IncrementarContador();
+                return Ok(contador);
             }
             catch (Exception ex)
             {

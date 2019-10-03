@@ -16,6 +16,7 @@ namespace Counter.Web
     internal class Startup
     {
         public const string APPSETTINGS = "appsettings.json";
+        public const int PUERTO_REDIS_DEFECTO = 6379;
 
         private readonly AppConfig configuracion;
 
@@ -54,6 +55,13 @@ namespace Counter.Web
 
         public virtual void ConfigureRepositories(IServiceCollection services)
         {
+            int redisPort = configuracion.RedisPort ?? PUERTO_REDIS_DEFECTO;
+            services.AddDistributedRedisCache(option =>
+            {
+                option.Configuration = $"{configuracion.RedisHost}:{redisPort}";
+                option.InstanceName = "master";
+            });
+
             services.AddScoped<ILogger, NLogLogger>();
             services.AddLogging(builder =>
             {

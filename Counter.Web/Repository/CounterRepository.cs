@@ -1,26 +1,37 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using System.Threading.Tasks;
 
 namespace Counter.Web.Repository
 {
     internal class CounterRepository : ICounterRepository
     {
-        public CounterRepository()
+        private const string CLAVE_CONTADOR = "Counter";
+
+        private readonly IDistributedCache distributedCache;
+
+        public CounterRepository(IDistributedCache distributedCache)
         {
-            // TODO: Persistencia
-            //this.dah = dah;
+            this.distributedCache = distributedCache;
         }
 
         public async Task<int> ObtenerContador()
         {
-            // TODO: Persistencia
-            return await Task.Run(() => { return 1; });
+            string contador = await distributedCache.GetStringAsync(CLAVE_CONTADOR);
+            if (string.IsNullOrEmpty(contador))
+            {
+                contador = "0";
+                await distributedCache.SetStringAsync(CLAVE_CONTADOR, contador);
+            }
+
+            return int.Parse(contador);
         }
 
-        public async Task<bool> IncrementarContador()
+        public async Task<int> IncrementarContador()
         {
-            // TODO: Persistencia
-            await Task.Run(() => { return; });
-            return true;
+            int contador = await ObtenerContador();
+            contador++;
+            await distributedCache.SetStringAsync(CLAVE_CONTADOR, contador.ToString());
+            return contador;
         }
     }
 }
