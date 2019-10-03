@@ -5,7 +5,7 @@ services:
     depends_on:
       - "redis"
     ports:
-      - "5010:5000"
+      - "${COUNTER_WEBPORT}:5000"
   redis:
     image: "redis:5.0.6-alpine"
-    command: redis-server --requirepass password
+    command: "redis-server --requirepass ${REDIS_PASSWORD}"
