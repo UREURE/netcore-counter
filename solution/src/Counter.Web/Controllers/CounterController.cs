@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace Counter.Web.Controllers
 {
     /// <summary>
-    ///
+    /// Controlador del contador
     /// </summary>
-    //[ApiController]
+    [ApiController]
     [Route("/" + UriPath.PREFIX + "/[controller]")]
     public class CounterController : Controller
     {
@@ -26,10 +26,10 @@ namespace Counter.Web.Controllers
         #region Constructores
 
         /// <summary>
-        ///
+        /// Constructor básico del Controlador
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="counterRepository"></param>
+        /// <param name="logger">Logger de la aplicación</param>
+        /// <param name="counterRepository">Instancia para las operaciones del controlador</param>
         public CounterController(ILogger logger, ICounterRepository counterRepository)
         {
             this.logger = logger;
@@ -40,11 +40,12 @@ namespace Counter.Web.Controllers
         #endregion
 
         /// <summary>
-        ///
+        /// Obtiene el valor del contador
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Retorna el valor del contador</returns>
         [HttpGet]
         [Route("leer")]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<int>> Leer()
         {
             try
@@ -61,11 +62,12 @@ namespace Counter.Web.Controllers
         }
 
         /// <summary>
-        ///
+        /// Incrementa el valor del contador
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Retorna el valor del contador después de ser incrementado</returns>
         [HttpGet]
         [Route("incrementar")]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<int>> Incrementar()
         {
             try
@@ -82,11 +84,13 @@ namespace Counter.Web.Controllers
         }
 
         /// <summary>
-        ///
+        /// Genera un error en la aplicación para probar el sistema de Logs
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Retorna un error 500</returns>
         [HttpGet]
         [Route("error")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult<bool>> Error()
         {
             try

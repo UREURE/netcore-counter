@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counter.Web", "src\Counter.Web\Counter.Web.csproj", "{37E96DD7-32F4-4A59-9A00-10FA3714D56B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E4AF1F06-944C-44B1-A7E4-CAC4B2FCEA9C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{BB5DD1CD-D45F-4B57-B55D-9118FD1270CC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counter.Web.Test", "test\Counter.Web.Test\Counter.Web.Test.csproj", "{E6F792B9-3F8A-4E09-8132-A11F3D85E6AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37E96DD7-32F4-4A59-9A00-10FA3714D56B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37E96DD7-32F4-4A59-9A00-10FA3714D56B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37E96DD7-32F4-4A59-9A00-10FA3714D56B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37E96DD7-32F4-4A59-9A00-10FA3714D56B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6F792B9-3F8A-4E09-8132-A11F3D85E6AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6F792B9-3F8A-4E09-8132-A11F3D85E6AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6F792B9-3F8A-4E09-8132-A11F3D85E6AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6F792B9-3F8A-4E09-8132-A11F3D85E6AF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{37E96DD7-32F4-4A59-9A00-10FA3714D56B} = {E4AF1F06-944C-44B1-A7E4-CAC4B2FCEA9C}
+		{E6F792B9-3F8A-4E09-8132-A11F3D85E6AF} = {BB5DD1CD-D45F-4B57-B55D-9118FD1270CC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06B91B0E-611C-4F44-A6A3-A52CC93F77B3}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35;packages\Unity.Interception.2.1.505.2\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35
+	EndGlobalSection
+EndGlobal
