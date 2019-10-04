@@ -55,16 +55,30 @@ namespace Counter.Web
 
         public virtual void ConfigureRepositories(IServiceCollection services)
         {
-            string redisHost = configuracion.Redis_Host ?? "localhost";
-            int redisPort = configuracion.Redis_Port ?? PUERTO_REDIS_DEFECTO;
+            string redisHost = "localhost";
+            int redisPort = PUERTO_REDIS_DEFECTO;
+            string redisPassword = null;
+            string redisInstance = "netcore-counter";
+
+            if (configuracion.Redis != null)
+            {
+                if (!string.IsNullOrEmpty(configuracion.Redis.Host))
+                    redisHost = configuracion.Redis.Host;
+                if (configuracion.Redis.Port.HasValue)
+                    redisPort = configuracion.Redis.Port.Value;
+                if (!string.IsNullOrEmpty(configuracion.Redis.Password))
+                    redisPassword = configuracion.Redis.Password;
+                if (!string.IsNullOrEmpty(configuracion.Redis.Instance))
+                    redisInstance = configuracion.Redis.Instance;
+            }
             string redisConfiguration = $"{redisHost}:{redisPort}";
-            if (!string.IsNullOrEmpty(configuracion.Redis_Password))
-                redisConfiguration = $"{redisConfiguration},password={configuracion.Redis_Password}";
+            if (!string.IsNullOrEmpty(redisPassword))
+                redisConfiguration = $"{redisConfiguration},password={redisPassword}";
 
             services.AddDistributedRedisCache(option =>
             {
                 option.Configuration = redisConfiguration;
-                option.InstanceName = configuracion.Redis_Instance ?? "netcore-counter";
+                option.InstanceName = redisInstance;
             });
 
             services.AddScoped<ILogger, NLogLogger>();
