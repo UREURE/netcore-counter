@@ -1,25 +1,57 @@
 # Counter
 
-Proyecto académico con el objetivo de crear una aplicación [.NET Core](https://dotnet.microsoft.com/download) que:
+Proyecto académico con el objetivo de crear una aplicación .NET Core que:
 1. Consuma una base de datos.
 2. Se pueda ejecutar localmente con [Visual Studio](https://visualstudio.microsoft.com/es/vs/) 2019 (se debe configurar qué servicio Redis debe consumir).
 3. Se pueda ejecutar localmente con [Docker](https://www.docker.com/) (se debe configurar qué servicio Redis debe consumir).
-4. Se pueda ejecutar localmente con [Docker-compose](https://docs.docker.com/compose/), levantando un servicio Redis para probar la aplicación.
+4. Se pueda ejecutar localmente con [Docker-compose](https://docs.docker.com/compose/) levantando un servicio Redis y con la aplicación preparada para consumirlo.
 5. Publique mensajes de *log* de la aplicación.
 
 ## Descripción de la aplicación
 
-La aplicación es un servicio Web API, con la documentación expuesta utilizando [Swagger](https://swagger.io/):
+La aplicación es un servicio Web API simple, que permite utilizar un contador en un servicio Redis, con las siguientes operaciones:
+* Leer el contador.
+* Incrementar el contador.
+
+Además, tiene un método auxiliar para generar un error, y comprobar su publicación en el sistema de *Logs*.
+
+## Funcionamiento de la aplicación
+
+El API publicado por la documentación está documentado con [Swagger](https://swagger.io/). Se puede consultar la documentación ejecutando la aplicación, y accediendo a la dirección *http://**host**:**puerto**/api/v1/swagger/index.html*:
 
 ![Swagger](./img/swagger.png)
 
-Cómo probar la aplicación:
+La aplicación se debe configurar con el archivo [appsettings.json](./solution/src/Counter.Web/appsettings.json), para establecer, por ejemplo, la información de conexión con Redis. La configuración puede ser sobreescrita por las variables de entorno que se establezcan el el contexto en el que se ejecute.
+
+## Requisitos
+
+Para compilar la aplicación es necesario:
+* [SKD de .NET Core](https://dotnet.microsoft.com/download) 2.2.
+
+Para ejecutar la aplicación es necesario:
+* [Runtime de .NET Core](https://dotnet.microsoft.com/download/dotnet-core/2.2) 2.2.
+
+## Ejecutar localmente la aplicación
+
+Para la ejecución con **Docker**, es necesario configurar un servidio Redis pre-existente en el archivo [appsettings.json](./solution/src/Counter.Web/appsettings.json):
 
 ```bash
 git clone https://github.com/UREURE/netcore-counter.git
-cd netcore-counter
+cd netcore-counter/solution
 chmod 700 *.sh
-docker-compose up --build
-docker-compose rm -f
+./start.sh
 ```
+
+Para la ejecución con **Docker-compose** se levanta un servicio Redis junto con el de la aplicación, configurando las variables de entorno en [.env](./solution/.env):
+
+```bash
+git clone https://github.com/UREURE/netcore-counter.git
+cd netcore-counter/solution
+chmod 700 *.sh
+./start-compose.sh
+```
+
+## Ejecutar la aplicación en Kubernetes
+
+TODO:
 

@@ -62,7 +62,7 @@ namespace Counter.Web.Controllers
         }
 
         /// <summary>
-        /// Incrementa el valor del contador
+        /// Incrementa el valor del contador y obtiene el valor del contador incrementado
         /// </summary>
         /// <returns>Retorna el valor del contador después de ser incrementado</returns>
         [HttpGet]

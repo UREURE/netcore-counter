@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: netcore-counter
+  name: netcore-counter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: netcore-counter
+  template:
+    metadata:
+      labels:
+        run: netcore-counter
+    spec:
+      containers:
+      - image: ureure/netcore-counter:0.1-unstable
+        name: netcore-counter
+        livenessProbe:
+          httpGet:
+            path: /api/v1/Health/live
+            port: 5000
+        readinessProbe:
+          httpGet:
+            path: /api/v1/Health/ready
+            port: 5000
+        env:
+          - name: REDIS__HOST
+            value: redis
+          - name: REDIS__PORT
+            value: 6379
+          - name: REDIS__INSTANCE
+            value: netcore-counter
+          - name: REDIS__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis
+                key: password
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 128Mi
+            cpu: 100m
