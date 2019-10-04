@@ -54,10 +54,17 @@ chmod 700 *.sh
 
 ## Ejecutar la aplicación en Kubernetes GKE
 
-Es necesario conectar con un clúster existente en GKE. Por ejemplo con:
+Requisitos:
+1. Conectar con un clúster Kubernetes previamente creado en GKE:
 
 ```bash
 gcloud container clusters get-credentials *nombre_clúster_GKE* --zone *zona_clúster_GKE* --project *nombre_proyecto_GCP*
+```
+
+2. Instalar *kubectl*.
+
+```bash
+gcloud components install kubectl
 ```
 
 Para la ejecución de la aplicación en un clúster de Kubernetes en GKE se utilizan las imágenes subidas de esta aplicación, y de Redis, en [Docker Hub](https://cloud.docker.com/repository/registry-1.docker.io/ureure/netcore-counter), ejecutando:
@@ -66,5 +73,5 @@ Para la ejecución de la aplicación en un clúster de Kubernetes en GKE se util
 git clone https://github.com/UREURE/netcore-counter.git
 cd netcore-counter/k8s
 chmod 700 *.sh
-./start-compose.sh *poner_aquí_la_contraseña_que_se_desee_poner_para_el_servicio_Redis*
+./start-kubernetes.sh *poner_aquí_la_contraseña_que_se_desee_poner_para_el_servicio_Redis*
 ```

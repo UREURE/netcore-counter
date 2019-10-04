@@ -15,7 +15,7 @@ spec:
         run: redis
     spec:
       containers:
-      - image: redis
+      - image: redis:5.0.6-alpine
         name: redis
         args: ["--requirepass", "$(REDIS__PASSWORD)"]
         env:

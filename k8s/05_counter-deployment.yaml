@@ -15,7 +15,7 @@ spec:
         run: netcore-counter
     spec:
       containers:
-      - image: ureure/netcore-counter:0.1-unstable
+      - image: netcore-counter:0.1-unstable
         name: netcore-counter
         livenessProbe:
           httpGet:
