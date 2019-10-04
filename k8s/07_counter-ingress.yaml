@@ -6,7 +6,7 @@ metadata:
   name: netcore-counter
 spec:
   rules:
-  - host: netcore-counter.35.189.193.122.nip.io
+  - host: netcore-counter.35.195.192.216.nip.io
     http:
       paths:
       - backend:
