@@ -29,7 +29,7 @@ spec:
           - name: REDIS__HOST
             value: redis
           - name: REDIS__PORT
-            value: 6379
+            value: "6379"
           - name: REDIS__INSTANCE
             value: netcore-counter
           - name: REDIS__PASSWORD

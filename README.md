@@ -64,7 +64,7 @@ gcloud container clusters get-credentials *nombre_clúster_GKE* --zone *zona_cl�
 2. Instalar *kubectl*.
 
 ```bash
-gcloud components install kubectl
+sudo apt-get install kubectl -y
 ```
 
 Para la ejecución de la aplicación en un clúster de Kubernetes en GKE se utilizan las imágenes subidas de esta aplicación, y de Redis, en [Docker Hub](https://cloud.docker.com/repository/registry-1.docker.io/ureure/netcore-counter), ejecutando:
