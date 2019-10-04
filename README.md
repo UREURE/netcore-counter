@@ -5,8 +5,8 @@ Proyecto académico con el objetivo de crear una aplicación *.NET Core* que:
 1. Consuma una base de datos.
 2. Se pueda ejecutar localmente con [Visual Studio](https://visualstudio.microsoft.com/es/vs/) 2019 (se debe configurar qué servicio Redis externo debe consumir).
 3. Se pueda ejecutar localmente con [Docker](https://www.docker.com/) (se debe configurar qué servicio Redis externo debe consumir).
-4. Se pueda ejecutar localmente con [Docker-compose](https://docs.docker.com/compose/) levantando un servicio Redis y con la aplicación preparada para consumirlo.
-5. Se pueda ejecutar en un clúster Kubernetes en [GKE](https://cloud.google.com/kubernetes-engine/?hl=es) levantando un servicio Redis, y con la aplicación preparada para consumirlo.
+4. Se pueda ejecutar localmente con [Docker-compose](https://docs.docker.com/compose/) levantando un servicio Redis, y con la aplicación configurada para consumirlo.
+5. Se pueda ejecutar en un clúster Kubernetes en [GKE](https://cloud.google.com/kubernetes-engine/?hl=es) levantando un servicio Redis, y con la aplicación configurada para consumirlo.
 6. Publique mensajes de *log* de la aplicación en formato JSON por la salida estándar.
 
 ## Descripción de la aplicación
@@ -76,7 +76,7 @@ gcloud container clusters get-credentials <nombre_clúster_GKE> --zone <zona_cl�
 sudo apt-get install kubectl -y
 ```
 
-* Tener instalado un *Ingress Controller*. Si no se tiene instalado, se puede instalar el de *Nginx* con:
+* Tener instalado un *Ingress Controller*. Si no se tiene instalado, se puede instalar el de *[Nginx](https://github.com/kubernetes/ingress-nginx/tree/master/deploy)* con:
 
 ```bash
 kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $(gcloud config get-value account)
@@ -84,13 +84,13 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/mast
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud-generic.yaml
 ```
 
-Para la ejecución de la aplicación en un clúster de Kubernetes en GKE, se pueden utilizar las imágenes subidas de esta [aplicación](https://cloud.docker.com/repository/registry-1.docker.io/ureure/netcore-counter), y de [Redis](https://hub.docker.com/_/redis), en [Docker Hub](https://hub.docker.com/). Por ejemplo, ejecutando:
+Para la ejecución de la aplicación en un clúster de Kubernetes en GKE, se pueden utilizar las imágenes subidas de esta [aplicación](https://hub.docker.com/r/ureure/netcore-counter), y de [Redis](https://hub.docker.com/_/redis), en [Docker Hub](https://hub.docker.com/). Por ejemplo, ejecutando:
 
 ```bash
 git clone https://github.com/UREURE/netcore-counter.git
 cd netcore-counter/k8s
 chmod 700 *.sh
-./start-kubernetes.sh *poner_aquí_la_contraseña_que_se_desee_poner_para_el_servicio_Redis*
+./start-kubernetes.sh <poner_aquí_la_contraseña_que_se_desee_para_el_servicio_Redis>
 ```
 
 Una vez instalado, se puede ver en qué IP está expuesta la aplicación fuera del clúster con:
@@ -99,7 +99,7 @@ Una vez instalado, se puede ver en qué IP está expuesta la aplicación fuera d
 kubectl get ingress netcore-counter --namespace=netcore-counter
 ```
 
-La IP en la que está expuesta la aplicación fuera del clúster está en el campo *ADRESS*. En este ejemplo, es *34.76.93.8*:
+La IP en la que está expuesta la aplicación fuera del clúster está en el campo *ADDRESS*. En este ejemplo, es *34.76.93.8*:
 
 ![IP Ingress](./img/ip-ingress.png)
 
@@ -115,4 +115,4 @@ Utilizando [nip.io](https://nip.io/) se puede acceder a la aplicación fácilmen
 
 En cada ejeercicio realizado, la dirección a utilizar será la resultante de reemplazar la IP del ejemplo con la obtenida anteriormente:
 
-"[http://netcore-counter.<ADRESS>.nip.io/api/v1/swagger/index.html"](http://netcore-counter.<ADRESS>.nip.io/api/v1/swagger/index.html)
+"[http://netcore-counter.ADDRESS.nip.io/api/v1/swagger/index.html"](http://netcore-counter.ADDRESS.nip.io/api/v1/swagger/index.html)
