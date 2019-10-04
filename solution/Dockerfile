@@ -4,10 +4,12 @@ WORKDIR /app
 # Copiar solución y proyecto, y descargar NuGets
 COPY *.sln .
 COPY src/Counter.Web/*.csproj ./src/Counter.Web/
+COPY test/Counter.Web.Test/*.csproj ./test/Counter.Web.Test/
 RUN dotnet restore
 
 # Copiar los fuentes del proyecto y compilar
 COPY src/Counter.Web/. ./src/Counter.Web/
+COPY test/Counter.Web.Test/. ./test/Counter.Web.Test/
 WORKDIR /app/src/Counter.Web
 RUN dotnet publish -c Release
 
