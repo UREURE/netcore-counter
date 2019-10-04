@@ -5,13 +5,14 @@ Proyecto académico con el objetivo de crear una aplicación .NET Core que:
 2. Se pueda ejecutar localmente con [Visual Studio](https://visualstudio.microsoft.com/es/vs/) 2019 (se debe configurar qué servicio Redis debe consumir).
 3. Se pueda ejecutar localmente con [Docker](https://www.docker.com/) (se debe configurar qué servicio Redis debe consumir).
 4. Se pueda ejecutar localmente con [Docker-compose](https://docs.docker.com/compose/) levantando un servicio Redis y con la aplicación preparada para consumirlo.
-5. Publique mensajes de *log* de la aplicación.
+4. Se pueda ejecutar en un clúster Kubernetes en [GKE](https://cloud.google.com/kubernetes-engine/?hl=es) levantando un servicio Redis y con la aplicación preparada para consumirlo.
+6. Publique mensajes de *log* de la aplicación en formato JSON por la salida estándar.
 
 ## Descripción de la aplicación
 
 La aplicación es un servicio Web API simple, que permite utilizar un contador en un servicio Redis, con las siguientes operaciones:
 * Leer el contador.
-* Incrementar el contador.
+* Incrementar el contador, y devolver el valor del contador incrementado.
 
 Además, tiene un método auxiliar para generar un error, y comprobar su publicación en el sistema de *Logs*.
 
@@ -51,7 +52,19 @@ chmod 700 *.sh
 ./start-compose.sh
 ```
 
-## Ejecutar la aplicación en Kubernetes
+## Ejecutar la aplicación en Kubernetes GKE
 
-TODO:
+Es necesario conectar con un clúster existente en GKE. Por ejemplo con:
 
+```bash
+gcloud container clusters get-credentials *nombre_clúster_GKE* --zone *zona_clúster_GKE* --project *nombre_proyecto_GCP*
+```
+
+Para la ejecución de la aplicación en un clúster de Kubernetes en GKE se utilizan las imágenes subidas de esta aplicación, y de Redis, en [Docker Hub](https://cloud.docker.com/repository/registry-1.docker.io/ureure/netcore-counter), ejecutando:
+
+```bash
+git clone https://github.com/UREURE/netcore-counter.git
+cd netcore-counter/k8s
+chmod 700 *.sh
+./start-compose.sh *poner_aquí_la_contraseña_que_se_desee_poner_para_el_servicio_Redis*
+```
