@@ -3,7 +3,6 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using NLog;
-using System;
 using System.Net;
 
 namespace Counter.Web
@@ -19,9 +18,6 @@ namespace Counter.Web
             IConfigurationRoot configurationRoot = configurationBuilder.Build();
             configurationRoot.Bind(configuracion);
 
-            // Configurar NLog
-            LogManager.LoadConfiguration("nlog.config");
-
             IWebHost webHost = WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(configurationRoot)
                 .UseKestrel(options =>
@@ -32,8 +28,6 @@ namespace Counter.Web
                 .UseStartup<Startup>()
                 .Build();
             webHost.Run();
-
-            LogManager.Flush(TimeSpan.FromSeconds(15));
             LogManager.Shutdown();
         }
     }
