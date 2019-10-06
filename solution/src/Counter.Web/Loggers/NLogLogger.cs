@@ -5,12 +5,6 @@ namespace Counter.Web.Loggers
 {
     internal class NLogLogger : ILogger
     {
-        #region Constantes Públicas
-
-        public const string NOMBRE_DEFECTO = "Log";
-
-        #endregion
-
         #region Declaraciones
 
         protected readonly NLog.ILogger logger;
@@ -19,14 +13,9 @@ namespace Counter.Web.Loggers
 
         #region Constructor
 
-        public NLogLogger(string loggerName)
+        public NLogLogger()
         {
-            string nombre = string.IsNullOrEmpty(loggerName) ? NOMBRE_DEFECTO : loggerName;
-            logger = LogManager.GetLogger(nombre);
-        }
-
-        public NLogLogger() : this(NOMBRE_DEFECTO)
-        {
+            logger = LogManager.GetCurrentClassLogger();
         }
 
         #endregion

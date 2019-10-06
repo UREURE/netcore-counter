@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NLog.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
 
@@ -81,15 +80,8 @@ namespace Counter.Web
                 option.InstanceName = redisInstance;
             });
 
+            // Una Instancia por petición
             services.AddScoped<ILogger, NLogLogger>();
-            services.AddLogging(builder =>
-            {
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
-            });
 
             // Una Instancia cada vez que resulte necesaria
             services.AddTransient<ICounterRepository, CounterRepository>();
