@@ -22,6 +22,8 @@ spec:
         readinessProbe:
 {{ toYaml .Values.readinessProbe | indent 10 }}
         env:
+          - name: COUNTER__VERSION
+            value: {{ .Values.tag }}
           - name: REDIS__HOST
             value: {{ .Release.Name }}-redis-master
           - name: REDIS__PORT
