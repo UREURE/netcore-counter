@@ -51,6 +51,11 @@ chmod 700 *.sh
 ./start.sh
 ```
 
+Por defecto, la aplicación estará disponible en:
+
+* [http://localhost:5010/api/v1/swagger/index.html](http://localhost:5010/api/v1/swagger/index.html).
+
+
 ## Ejecutar localmente la aplicación con Docker-compose
 
 Para la ejecución con **Docker-compose**, se levanta automáticamente un servicio Redis junto con el de la aplicación, configurando las variables de entorno en el archivo [.env](./solution/.env). Una vez configuradas las variables, se puede utilizar:
@@ -61,6 +66,10 @@ cd netcore-counter/solution
 chmod 700 *.sh
 ./start-compose.sh
 ```
+
+Por defecto, la aplicación estará disponible en:
+
+* [http://localhost:5010/api/v1/swagger/index.html](http://localhost:5010/api/v1/swagger/index.html).
 
 ## Desplegar la aplicación en Kubernetes con GKE
 
@@ -118,7 +127,7 @@ helm install --name netcore-counter netcore-counter --namespace=netcore-counter
 cd ../..
 ```
 
-## Probar la aplicación desplegada
+## Probar la aplicación desplegada en Kubernetes
 
 Una vez instalada, se puede ver en qué IP está expuesta la aplicación fuera del clúster con:
 
