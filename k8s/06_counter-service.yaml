@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: netcore-counter
+  name: netcore-counter
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    run: netcore-counter
+  sessionAffinity: None
+  type: ClusterIP

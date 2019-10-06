@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: redis
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: redis
+  template:
+    metadata:
+      labels:
+        run: redis
+    spec:
+      containers:
+      - image: redis:5.0.6-alpine
+        name: redis
+        args: ["--requirepass", "$(REDIS__PASSWORD)"]
+        env:
+          - name: REDIS__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis
+                key: password
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 200m
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: redis-pv-claim

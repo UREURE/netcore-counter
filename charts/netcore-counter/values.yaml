@@ -1,0 +1,19 @@
+image: ureure/netcore-counter
+tag: 0.1-unstable
+replicas: 2
+
+livenessProbe:
+  httpGet:
+    path: /api/v1/Health/live
+    port: 5000
+readinessProbe:
+  httpGet:
+    path: /api/v1/Health/ready
+    port: 5000
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
