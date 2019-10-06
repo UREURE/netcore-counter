@@ -137,7 +137,7 @@ kubectl get ingress netcore-counter --namespace=netcore-counter
 
 ![IP Ingress](./img/ip-ingress.png)
 
-La IP en la que está expuesta la aplicación fuera del clúster está en el campo *ADDRESS*. En este ejemplo, es *34.76.93.8*:
+La IP en la que está expuesta la aplicación fuera del clúster está en el campo *ADDRESS*. En este ejemplo, es *34.76.93.8*.
 
 **¡¡¡Atención!!!: La IP generada varía en cada ejercicio de despliegue en Kubernetes. Será necesario modificar el archivo [07_counter-ingress.yaml](./k8s/07_counter-ingress.yaml), reemplazando la IP del ejemplo con la obtenida en el paso anterior. Después de modificar la IP en el archivo, será necesario actualizar el objeto *Ingress* del clúster con**:
 
