@@ -21,11 +21,21 @@ spec:
           httpGet:
             path: /api/v1/Health/live
             port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /api/v1/Health/ready
             port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
         env:
+          - name: COUNTER_VERSION
+            value: 0.1-unstable
           - name: REDIS__HOST
             value: redis
           - name: REDIS__PORT
@@ -42,5 +52,24 @@ spec:
             memory: 128Mi
             cpu: 100m
           limits:
-            memory: 128Mi
+            memory: 512Mi
             cpu: 100m
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - netcore-counter
+            topologyKey: "kubernetes.io/hostname"
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - redis
+            topologyKey: "kubernetes.io/hostname"
