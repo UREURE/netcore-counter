@@ -35,7 +35,7 @@ spec:
           failureThreshold: 3
         env:
           - name: COUNTER_VERSION
-            value: 0.1-unstable
+            value: 0.3-unstable
           - name: REDIS__HOST
             value: redis
           - name: REDIS__PORT
