@@ -54,22 +54,3 @@ spec:
           limits:
             memory: 512Mi
             cpu: 100m
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: run
-                operator: In
-                values:
-                - netcore-counter
-            topologyKey: "kubernetes.io/hostname"
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: run
-                operator: In
-                values:
-                - redis
-            topologyKey: "kubernetes.io/hostname"
