@@ -14,6 +14,27 @@ spec:
       labels:
         run: {{ template "netcore-counter.fullname" . }}
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - {{ template "netcore-counter.fullname" . }}
+            topologyKey: "kubernetes.io/hostname"
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
       containers:
       - image: {{ .Values.image }}:{{ .Values.tag }}
         name: {{ template "netcore-counter.fullname" . }}
@@ -37,23 +58,3 @@ spec:
                 key: redis-password
         resources:
 {{ toYaml .Values.resources | indent 10 }}
-        affinity:
-          podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                - key: run
-                  operator: In
-                  values:
-                  - {{ template "netcore-counter.fullname" . }}
-              topologyKey: "kubernetes.io/hostname"
-          podAffinity:
-            preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              preference:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - redis
-              topologyKey: "kubernetes.io/hostname"
