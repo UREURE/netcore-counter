@@ -62,7 +62,7 @@ spec:
                 - key: run
                   operator: In
                   values:
-                  - {{ template "netcore-counter.fullname" . }}
+                  - netcore-counter
               topologyKey: "kubernetes.io/hostname"
           podAffinity:
             preferredDuringSchedulingIgnoredDuringExecution:
