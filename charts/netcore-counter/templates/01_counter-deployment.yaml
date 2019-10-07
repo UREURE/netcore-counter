@@ -37,3 +37,23 @@ spec:
                 key: redis-password
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: run
+                  operator: In
+                  values:
+                  - {{ template "netcore-counter.fullname" . }}
+              topologyKey: "kubernetes.io/hostname"
+          podAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
