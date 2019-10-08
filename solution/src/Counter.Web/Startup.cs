@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog.Extensions.Logging;
+using Prometheus;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
 
@@ -97,6 +98,8 @@ namespace Counter.Web
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseMetricServer();
+            app.UseMiddleware<RequestMiddleware>();
             app.UseMiddleware<HttpExceptionMiddleware>();
             app.UseMvc();
 
