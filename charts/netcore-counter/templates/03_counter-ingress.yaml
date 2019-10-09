@@ -6,7 +6,7 @@ metadata:
   name: {{ template "netcore-counter.fullname" . }}
 spec:
   rules:
-  - host: {{ template "netcore-counter.fullname" . }}.34.76.93.8.nip.io
+  - host: {{ template "netcore-counter.fullname" . }}.35.233.36.7.nip.io
     http:
       paths:
       - backend:

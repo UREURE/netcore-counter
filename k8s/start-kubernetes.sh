@@ -9,3 +9,4 @@ kubectl apply -f 04_redis-service.yaml --namespace=netcore-counter
 kubectl apply -f 05_counter-deployment.yaml --namespace=netcore-counter
 kubectl apply -f 06_counter-service.yaml --namespace=netcore-counter
 kubectl apply -f 07_counter-ingress.yaml --namespace=netcore-counter
+kubectl apply -f 08_counter-service-monitor.yaml --namespace=netcore-counter
