@@ -3,10 +3,14 @@ kind: Service
 metadata:
   labels:
     run: netcore-counter
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "5000"
   name: netcore-counter
 spec:
   ports:
-  - port: 5000
+  - name: web
+    port: 5000
     protocol: TCP
     targetPort: 5000
   selector:
