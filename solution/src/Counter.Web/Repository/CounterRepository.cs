@@ -1,4 +1,5 @@
 ﻿using Counter.Web.Constantes;
+using Counter.Web.Loggers;
 using Microsoft.Extensions.Caching.Distributed;
 using Polly;
 using Polly.Registry;
@@ -11,18 +12,21 @@ namespace Counter.Web.Repository
     /// </summary>
     public class CounterRepository : ICounterRepository
     {
-        private readonly ISyncPolicy policy;
+        private readonly ILogger logger;
+        private readonly IAsyncPolicy policy;
         private readonly IDistributedCache distributedCache;
 
         /// <summary>
         ///
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="distributedCache"></param>
         /// <param name="policyRegistry"></param>
-        public CounterRepository(IDistributedCache distributedCache, IReadOnlyPolicyRegistry<string> policyRegistry)
+        public CounterRepository(ILogger logger, IDistributedCache distributedCache, IReadOnlyPolicyRegistry<string> policyRegistry)
         {
+            this.logger = logger;
             this.distributedCache = distributedCache;
-            policy = policyRegistry.Get<ISyncPolicy>(Claves.CLAVE_POLITICA_CACHE);
+            policy = policyRegistry.Get<IAsyncPolicy>(Claves.CLAVE_POLITICA_CACHE);
         }
 
         /// <summary>
@@ -57,7 +61,7 @@ namespace Counter.Web.Repository
         /// <returns></returns>
         public async Task<int> ObtenerContador()
         {
-            string contador = await policy.Execute(() => ObtenerContadorCache());
+            string contador = await policy.ExecuteAsync(() => ObtenerContadorCache());
             return int.Parse(contador);
         }
 
@@ -69,7 +73,7 @@ namespace Counter.Web.Repository
         {
             int contador = await ObtenerContador();
             contador++;
-            await policy.Execute(() => GuardarContadorCache(contador.ToString()));
+            await policy.ExecuteAsync(() => GuardarContadorCache(contador.ToString()));
             return contador;
         }
     }

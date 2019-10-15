@@ -5,17 +5,13 @@ using Counter.Web.Middleware;
 using Counter.Web.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog.Extensions.Logging;
 using Polly;
-using Polly.Caching;
-using Polly.Caching.Distributed;
 using Polly.CircuitBreaker;
 using Polly.Registry;
 using Prometheus;
-using StackExchange.Redis;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
@@ -63,6 +59,37 @@ namespace Counter.Web
             ConfigureRepositories(services);
         }
 
+        public virtual void AddPolicies(IServiceCollection services)
+        {
+            services.AddSingleton<IReadOnlyPolicyRegistry<string>, PolicyRegistry>((serviceProvider) =>
+            {
+                PolicyRegistry registry = new PolicyRegistry();
+
+                Action<Exception, TimeSpan> onBreak = (exception, timespan) =>
+                {
+                    serviceProvider.GetRequiredService<ILogger>().Error($"Utilizando CircuitBreaker durante {timespan.TotalMinutes} minutos tras el error: {exception}");
+                };
+                Action onReset = () =>
+                {
+                    serviceProvider.GetRequiredService<ILogger>().Error($"Finalizando CircuitBreaker.");
+                };
+                AsyncCircuitBreakerPolicy breaker = Policy
+                    .Handle<Exception>()
+                    .CircuitBreakerAsync(2, TimeSpan.FromMinutes(1), onBreak, onReset);
+
+                AsyncPolicy policyCache = Policy
+                    .Handle<Exception>()
+                    .RetryAsync(3, onRetry: (exception, retryCount) =>
+                    {
+                        serviceProvider.GetRequiredService<ILogger>().Warn($"Error en el intento {retryCount}: {exception}");
+                    })
+                    .WrapAsync(breaker);
+
+                registry.Add(Claves.CLAVE_POLITICA_CACHE, policyCache);
+                return registry;
+            });
+        }
+
         public virtual void ConfigureRepositories(IServiceCollection services)
         {
             string redisHost = "localhost";
@@ -94,35 +121,6 @@ namespace Counter.Web
                 option.InstanceName = redisInstance;
             });
 
-            services.AddSingleton<IAsyncCacheProvider<string>>(serviceProvider => serviceProvider.GetRequiredService<IDistributedCache>().AsAsyncCacheProvider<string>());
-            services.AddSingleton<IReadOnlyPolicyRegistry<string>, PolicyRegistry>((serviceProvider) =>
-            {
-                PolicyRegistry registry = new PolicyRegistry();
-
-                CircuitBreakerPolicy policyCircuitBreaker = Policy
-                .Handle<RedisConnectionException>()
-                .CircuitBreaker(1, TimeSpan.FromMinutes(1),
-                onBreak: (exception, timespan, context) =>
-                {
-                    serviceProvider.GetRequiredService<ILogger>().Error($"Utilizando CircuitBreaker durante {timespan.TotalMinutes} minutos tras el error: {exception}");
-                },
-                onReset: context =>
-                {
-                    serviceProvider.GetRequiredService<ILogger>().Error($"Finalizando CircuitBreaker.");
-                });
-
-                Policy policyIntentos = Policy
-                .Handle<RedisConnectionException>()
-                .Retry(redisReintentos, onRetry: (exception, retryCount, context) =>
-                {
-                    serviceProvider.GetRequiredService<ILogger>().Error($"Error en el intento {retryCount}: {exception}");
-                })
-                .Wrap(policyCircuitBreaker);
-
-                registry.Add(Claves.CLAVE_POLITICA_CACHE, policyIntentos);
-                return registry;
-            });
-
             // ...
             services.AddScoped<ILogger, NLogLogger>();
             services.AddLogging(builder =>
@@ -133,6 +131,8 @@ namespace Counter.Web
                     CaptureMessageProperties = true
                 });
             });
+
+            AddPolicies(services);
 
             // Una Instancia cada vez que resulte necesaria
             services.AddTransient<ICounterRepository, CounterRepository>();
