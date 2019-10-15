@@ -144,7 +144,7 @@ namespace Counter.Web
                 if (configuracion.Port.HasValue)
                     puerto = configuracion.Port.Value;
             }
-            string uri = $"{protocolo}://{host}:{puerto}/{UriPath.PREFIX}";
+            string uri = $"{protocolo}://{host}:{puerto}/";
 
             services.AddHttpClient(Claves.CLAVE_CLIENTE_HTTP_NEXT_COUNTER, client =>
             {

@@ -36,7 +36,7 @@ namespace Counter.Web.Repository
         protected async Task<string> LeerContadorNextCounter()
         {
             HttpClient httpClient = httpClientFactory.CreateClient(Claves.CLAVE_CLIENTE_HTTP_NEXT_COUNTER);
-            string path = $"{NOMBRE_CONTROLADOR}/{NOMBRE_ACCION_LEER}";
+            string path = $"{UriPath.PREFIX}/{NOMBRE_CONTROLADOR}/{NOMBRE_ACCION_LEER}";
             string contador = await httpClient.GetStringAsync(path);
             return contador;
         }
@@ -48,7 +48,7 @@ namespace Counter.Web.Repository
         protected async Task<string> IncrementarContadorNextCounter()
         {
             HttpClient httpClient = httpClientFactory.CreateClient(Claves.CLAVE_CLIENTE_HTTP_NEXT_COUNTER);
-            string path = $"{NOMBRE_CONTROLADOR}/{NOMBRE_ACCION_INCREMENTAR}";
+            string path = $"{UriPath.PREFIX}/{NOMBRE_CONTROLADOR}/{NOMBRE_ACCION_INCREMENTAR}";
             string contador = await httpClient.GetStringAsync(path);
             return contador;
         }
