@@ -19,8 +19,6 @@ namespace Counter.Web.Controllers
         private readonly ILogger logger;
         private readonly ICounterRepository counterRepository;
 
-        private readonly bool publicarError;
-
         #endregion
 
         #region Constructores
@@ -34,7 +32,6 @@ namespace Counter.Web.Controllers
         {
             this.logger = logger;
             this.counterRepository = counterRepository;
-            publicarError = true;
         }
 
         #endregion
@@ -96,10 +93,8 @@ namespace Counter.Web.Controllers
             try
             {
                 logger.Trace($"Llamado método Error().");
-                if (publicarError)
-                    throw new Exception($"Error publicado, variable publicarError={publicarError}.");
-                else
-                    return await Task.Run(() => { return Ok(true); });
+                await Task.Run(() => { throw new Exception($"Error publicado."); });
+                return Ok(true);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,6 @@
 ﻿using Counter.Web.Constantes;
+using Counter.Web.Loggers;
+using Counter.Web.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,13 +13,22 @@ namespace Counter.Web.Controllers
     [Route("/" + UriPath.PREFIX + "/[controller]")]
     public class HealthController : Controller
     {
+        #region Declaraciones
+
+        private readonly ILogger logger;
+        private readonly ICounterRepository counterRepository;
+
+        #endregion
+
         #region Constructores
 
         /// <summary>
         /// Constructor básico del Controlador
         /// </summary>
-        public HealthController()
+        public HealthController(ILogger logger, ICounterRepository counterRepository)
         {
+            this.logger = logger;
+            this.counterRepository = counterRepository;
         }
 
         #endregion
@@ -43,7 +54,8 @@ namespace Counter.Web.Controllers
         [ProducesResponseType(200)]
         public async Task<ActionResult<bool>> Ready()
         {
-            return await Task.Run(() => { return Ok(true); });
+            await counterRepository.ObtenerContador();
+            return Ok(true);
         }
     }
 }

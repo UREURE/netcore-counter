@@ -1,11 +1,23 @@
 version: '3'
 services:
-  netcore-counter:
+  next-netcore-counter:
+    build: .
+    depends_on:
+      - "netcore-counter-redis"
+    ports:
+      - "${NEXT_COUNTER_HTTP_EXT_PORT}:${COUNTER_HTTP_INT_PORT}"
+    environment:
+      - COUNTER_HTTP_INT_PORT=${COUNTER_HTTP_INT_PORT}
+      - COUNTER_VERSION=${COUNTER_VERSION}
+      - NEXTCOUNTER__PROTOCOLO=${NEXTCOUNTER_PROTOCOLO}
+      - NEXTCOUNTER__HOST=${NEXTCOUNTER_HOST}
+      - NEXTCOUNTER__PORT=${COUNTER_REDIS_HTTP_EXT_PORT}
+  netcore-counter-redis:
     build: .
     depends_on:
       - "redis"
     ports:
-      - "${COUNTER_HTTP_EXT_PORT}:${COUNTER_HTTP_INT_PORT}"
+      - "${COUNTER_REDIS_HTTP_EXT_PORT}:${COUNTER_HTTP_INT_PORT}"
     environment:
       - COUNTER_HTTP_INT_PORT=${COUNTER_HTTP_INT_PORT}
       - COUNTER_VERSION=${COUNTER_VERSION}

@@ -10,7 +10,7 @@ namespace Counter.Web.Repository
     /// <summary>
     ///
     /// </summary>
-    public class CounterRepository : ICounterRepository
+    public class CounterRedisRepository : ICounterRepository
     {
         private readonly ILogger logger;
         private readonly IAsyncPolicy policy;
@@ -22,7 +22,7 @@ namespace Counter.Web.Repository
         /// <param name="logger"></param>
         /// <param name="distributedCache"></param>
         /// <param name="policyRegistry"></param>
-        public CounterRepository(ILogger logger, IDistributedCache distributedCache, IReadOnlyPolicyRegistry<string> policyRegistry)
+        public CounterRedisRepository(ILogger logger, IDistributedCache distributedCache, IReadOnlyPolicyRegistry<string> policyRegistry)
         {
             this.logger = logger;
             this.distributedCache = distributedCache;
@@ -39,7 +39,7 @@ namespace Counter.Web.Repository
             if (string.IsNullOrEmpty(contador))
             {
                 contador = "0";
-                await distributedCache.SetStringAsync(Claves.CLAVE_CONTADOR, contador);
+                await GuardarContadorCache(contador);
             }
             return contador;
         }
@@ -51,7 +51,7 @@ namespace Counter.Web.Repository
         /// <returns></returns>
         protected async Task<string> GuardarContadorCache(string contador)
         {
-            await distributedCache.SetStringAsync(Claves.CLAVE_CONTADOR, contador.ToString());
+            await distributedCache.SetStringAsync(Claves.CLAVE_CONTADOR, contador);
             return contador;
         }
 

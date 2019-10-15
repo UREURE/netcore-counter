@@ -21,8 +21,18 @@ namespace Counter.Web
     internal class Startup
     {
         public const string APPSETTINGS = "appsettings.json";
+        public const string HOST_REDIS_DEFECTO = "localhost";
         public const int PUERTO_REDIS_DEFECTO = 6379;
+        public const string INSTANCIA_REDIS_DEFECTO = "netcore-counter";
         public const int REINTENTOS_REDIS_DEFECTO = 3;
+
+        public const string PROTOCOLO_NEXT_COUNTER_DEFECTO = "http";
+        public const string HOST_NEXT_COUNTER_DEFECTO = "localhost";
+        public const int PUERTO_NEXT_COUNTER_DEFECTO = 5000;
+        public const int REINTENTOS_NEXT_COUNTER_DEFECTO = 3;
+
+        public const string SELECTOR_PERSISTENCIA_REDIS = "Redis";
+        public const string SELECTOR_PERSISTENCIA_NEXT_COUNTER = "NextCounter";
 
         private readonly AppConfig configuracion;
 
@@ -90,26 +100,23 @@ namespace Counter.Web
             });
         }
 
-        public virtual void ConfigureRepositories(IServiceCollection services)
+        public virtual void AddRedis(IServiceCollection services, RedisConfig configuracion)
         {
-            string redisHost = "localhost";
+            string redisHost = HOST_REDIS_DEFECTO;
             int redisPort = PUERTO_REDIS_DEFECTO;
             string redisPassword = null;
-            string redisInstance = "netcore-counter";
-            int redisReintentos = PUERTO_REDIS_DEFECTO;
+            string redisInstance = INSTANCIA_REDIS_DEFECTO;
 
-            if (configuracion.Redis != null)
+            if (configuracion != null)
             {
-                if (!string.IsNullOrEmpty(configuracion.Redis.Host))
-                    redisHost = configuracion.Redis.Host;
-                if (configuracion.Redis.Port.HasValue)
-                    redisPort = configuracion.Redis.Port.Value;
-                if (!string.IsNullOrEmpty(configuracion.Redis.Password))
-                    redisPassword = configuracion.Redis.Password;
-                if (!string.IsNullOrEmpty(configuracion.Redis.Instance))
-                    redisInstance = configuracion.Redis.Instance;
-                if (configuracion.Redis.Reintentos.HasValue)
-                    redisReintentos = configuracion.Redis.Reintentos.Value;
+                if (!string.IsNullOrEmpty(configuracion.Host))
+                    redisHost = configuracion.Host;
+                if (configuracion.Port.HasValue)
+                    redisPort = configuracion.Port.Value;
+                if (!string.IsNullOrEmpty(configuracion.Password))
+                    redisPassword = configuracion.Password;
+                if (!string.IsNullOrEmpty(configuracion.Instance))
+                    redisInstance = configuracion.Instance;
             }
             string redisConfiguration = $"{redisHost}:{redisPort}";
             if (!string.IsNullOrEmpty(redisPassword))
@@ -120,8 +127,50 @@ namespace Counter.Web
                 option.Configuration = redisConfiguration;
                 option.InstanceName = redisInstance;
             });
+        }
 
-            // ...
+        public virtual void AddNextCounter(IServiceCollection services, NextCounterConfig configuracion)
+        {
+            string protocolo = PROTOCOLO_NEXT_COUNTER_DEFECTO;
+            string host = HOST_NEXT_COUNTER_DEFECTO;
+            int puerto = PUERTO_NEXT_COUNTER_DEFECTO;
+
+            if (configuracion != null)
+            {
+                if (!string.IsNullOrEmpty(configuracion.Protocolo))
+                    protocolo = configuracion.Protocolo;
+                if (!string.IsNullOrEmpty(configuracion.Host))
+                    host = configuracion.Host;
+                if (configuracion.Port.HasValue)
+                    puerto = configuracion.Port.Value;
+            }
+            string uri = $"{protocolo}://{host}:{puerto}/{UriPath.PREFIX}";
+
+            services.AddHttpClient(Claves.CLAVE_CLIENTE_HTTP_NEXT_COUNTER, client =>
+            {
+                client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+        }
+
+        public virtual void EstablecerSistemaPersistencia(IServiceCollection services)
+        {
+            switch (configuracion.SelectorPersistencia)
+            {
+                case SELECTOR_PERSISTENCIA_REDIS:
+                default:
+                    AddRedis(services, configuracion.Redis);
+                    services.AddTransient<ICounterRepository, CounterRedisRepository>();
+                    break;
+                case SELECTOR_PERSISTENCIA_NEXT_COUNTER:
+                    AddNextCounter(services, configuracion.NextCounter);
+                    services.AddTransient<ICounterRepository, NextCounterRepository>();
+                    break;
+            }
+        }
+
+        public virtual void ConfigureRepositories(IServiceCollection services)
+        {
             services.AddScoped<ILogger, NLogLogger>();
             services.AddLogging(builder =>
             {
@@ -133,9 +182,7 @@ namespace Counter.Web
             });
 
             AddPolicies(services);
-
-            // Una Instancia cada vez que resulte necesaria
-            services.AddTransient<ICounterRepository, CounterRepository>();
+            EstablecerSistemaPersistencia(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
