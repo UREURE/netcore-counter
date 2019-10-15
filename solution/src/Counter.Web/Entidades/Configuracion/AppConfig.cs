@@ -6,6 +6,6 @@
         public string Counter_Version { get; set; }
         public RedisConfig Redis { get; set; }
         public NextCounterConfig NextCounter { get; set; }
-        public string SelectorPersistencia { get; set; }
+        public string Counter_Selector_Persistencia { get; set; }
     }
 }

@@ -155,7 +155,7 @@ namespace Counter.Web
 
         public virtual void EstablecerSistemaPersistencia(IServiceCollection services)
         {
-            switch (configuracion.SelectorPersistencia)
+            switch (configuracion.Counter_Selector_Persistencia)
             {
                 case SELECTOR_PERSISTENCIA_REDIS:
                 default:
