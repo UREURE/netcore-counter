@@ -9,7 +9,7 @@ namespace Counter.Web.Repository
     /// <summary>
     ///
     /// </summary>
-    public class NextCounterRepository : ICounterRepository
+    public class NextCounterRepository : INextCounterRepository
     {
         private const string NOMBRE_CONTROLADOR = "Counter";
         private const string NOMBRE_ACCION_LEER = "leer";

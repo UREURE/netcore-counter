@@ -31,9 +31,6 @@ namespace Counter.Web
         public const int PUERTO_NEXT_COUNTER_DEFECTO = 5000;
         public const int REINTENTOS_NEXT_COUNTER_DEFECTO = 3;
 
-        public const string SELECTOR_PERSISTENCIA_REDIS = "Redis";
-        public const string SELECTOR_PERSISTENCIA_NEXT_COUNTER = "NextCounter";
-
         private readonly AppConfig configuracion;
 
         public Startup()
@@ -129,7 +126,7 @@ namespace Counter.Web
             });
         }
 
-        public virtual void AddNextCounter(IServiceCollection services, NextCounterConfig configuracion)
+        public virtual void AddNextCounterHttpClient(IServiceCollection services, NextCounterConfig configuracion)
         {
             string protocolo = PROTOCOLO_NEXT_COUNTER_DEFECTO;
             string host = HOST_NEXT_COUNTER_DEFECTO;
@@ -153,20 +150,15 @@ namespace Counter.Web
             });
         }
 
-        public virtual void EstablecerSistemaPersistencia(IServiceCollection services)
+        public virtual void AddRepositoryFactory(IServiceCollection services)
         {
-            switch (configuracion.Counter_Selector_Persistencia)
+            services.AddSingleton<IRepositoryFactory, RepositoryFactory>((serviceProvider) =>
             {
-                case SELECTOR_PERSISTENCIA_REDIS:
-                default:
-                    AddRedis(services, configuracion.Redis);
-                    services.AddTransient<ICounterRepository, CounterRedisRepository>();
-                    break;
-                case SELECTOR_PERSISTENCIA_NEXT_COUNTER:
-                    AddNextCounter(services, configuracion.NextCounter);
-                    services.AddTransient<ICounterRepository, NextCounterRepository>();
-                    break;
-            }
+                RepositoryFactory factoriaRepositorios = new RepositoryFactory();
+                factoriaRepositorios.Add(Claves.SELECTOR_PERSISTENCIA_REDIS, serviceProvider.GetRequiredService<ICounterRedisRepository>());
+                factoriaRepositorios.Add(Claves.SELECTOR_PERSISTENCIA_NEXT_COUNTER, serviceProvider.GetRequiredService<INextCounterRepository>());
+                return factoriaRepositorios;
+            });
         }
 
         public virtual void ConfigureRepositories(IServiceCollection services)
@@ -182,7 +174,12 @@ namespace Counter.Web
             });
 
             AddPolicies(services);
-            EstablecerSistemaPersistencia(services);
+
+            AddRedis(services, configuracion.Redis);
+            AddNextCounterHttpClient(services, configuracion.NextCounter);
+            services.AddTransient<ICounterRedisRepository, CounterRedisRepository>();
+            services.AddTransient<INextCounterRepository, NextCounterRepository>();
+            AddRepositoryFactory(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

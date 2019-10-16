@@ -10,7 +10,7 @@ namespace Counter.Web.Repository
     /// <summary>
     ///
     /// </summary>
-    public class CounterRedisRepository : ICounterRepository
+    public class CounterRedisRepository : ICounterRedisRepository
     {
         private readonly ILogger logger;
         private readonly IAsyncPolicy policy;
