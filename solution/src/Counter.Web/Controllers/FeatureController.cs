@@ -40,7 +40,7 @@ namespace Counter.Web.Controllers
         /// <summary>
         /// Obtiene el valor de activación de la feature
         /// </summary>
-        /// <returns>Retorna un error 500</returns>
+        /// <returns>Retorna el valor de activación de la feature</returns>
         [HttpGet]
         [Route("PersistenciaNextCounter")]
         [ProducesResponseType(200)]
