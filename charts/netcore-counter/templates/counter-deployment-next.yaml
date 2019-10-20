@@ -2,17 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: {{ template "netcore-counter.fullname" . }}
-  name: {{ template "netcore-counter.fullname" . }}
+    run: {{ template "netcore-counter.fullname" . }}-next
+  name: {{ template "netcore-counter.fullname" . }}-next
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      run: {{ template "netcore-counter.fullname" . }}
+      run: {{ template "netcore-counter.fullname" . }}-next
   template:
     metadata:
       labels:
-        run: {{ template "netcore-counter.fullname" . }}
+        run: {{ template "netcore-counter.fullname" . }}-next
     spec:
       affinity:
         podAntiAffinity:
@@ -22,7 +22,7 @@ spec:
               - key: run
                 operator: In
                 values:
-                - {{ template "netcore-counter.fullname" . }}
+                - {{ template "netcore-counter.fullname" . }}-next
             topologyKey: "kubernetes.io/hostname"
         podAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -37,7 +37,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - image: {{ .Values.image }}:{{ .Values.tag }}
-        name: {{ template "netcore-counter.fullname" . }}
+        name: {{ template "netcore-counter.fullname" . }}-next
         livenessProbe:
 {{ toYaml .Values.livenessProbe | indent 10 }}
         readinessProbe:
@@ -45,6 +45,14 @@ spec:
         env:
           - name: COUNTER_VERSION
             value: {{ .Values.tag }}
+          - name: FEATUREMANAGEMENT__PERSISTENCIANEXTCOUNTER
+            value: "true"
+          - name: NEXTCOUNTER__PROTOCOLO
+            value: "http"
+          - name: NEXTCOUNTER__HOST
+            value: {{ template "netcore-counter.fullname" . }}-redis
+          - name: NEXTCOUNTER__PORT
+            value: "5000"
           - name: REDIS__HOST
             value: {{ .Release.Name }}-redis-master
           - name: REDIS__PORT

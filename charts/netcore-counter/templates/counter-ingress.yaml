@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: {{ template "netcore-counter.fullname" . }}-user
+spec:
+  rules:
+  - host: {{ template "netcore-counter.fullname" . }}-user.35.233.36.7.nip.io
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "netcore-counter.fullname" . }}-user
+          servicePort: 5000

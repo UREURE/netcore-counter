@@ -1,5 +1,5 @@
 image: ureure/netcore-counter
-tag: 0.3-unstable
+tag: 0.5-unstable
 replicas: 2
 
 livenessProbe:
