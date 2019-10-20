@@ -177,8 +177,8 @@ namespace Counter.Web
 
             AddRedis(services, configuracion.Redis);
             AddNextCounterHttpClient(services, configuracion.NextCounter);
-            services.AddTransient<ICounterRedisRepository, CounterRedisRepository>();
-            services.AddTransient<INextCounterRepository, NextCounterRepository>();
+            services.AddSingleton<ICounterRedisRepository, CounterRedisRepository>();
+            services.AddSingleton<INextCounterRepository, NextCounterRepository>();
             AddRepositoryFactory(services);
         }
 
