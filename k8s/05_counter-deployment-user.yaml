@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: netcore-counter-user
+  name: netcore-counter-user
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: netcore-counter-user
+  template:
+    metadata:
+      labels:
+        run: netcore-counter-user
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - netcore-counter-user
+            topologyKey: "kubernetes.io/hostname"
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - redis
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+      - image: ureure/netcore-counter:0.5-unstable
+        name: netcore-counter-user
+        livenessProbe:
+          httpGet:
+            path: /api/v1/Health/live
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v1/Health/ready
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        env:
+          - name: COUNTER_VERSION
+            value: 0.5-unstable
+          - name: FEATUREMANAGEMENT__PERSISTENCIANEXTCOUNTER
+            value: "true"
+          - name: NEXTCOUNTER__PROTOCOLO
+            value: "http"
+          - name: NEXTCOUNTER__HOST
+            value: netcore-counter-next
+          - name: NEXTCOUNTER__PORT
+            value: "5000"
+          - name: REDIS__HOST
+            value: redis
+          - name: REDIS__PORT
+            value: "6379"
+          - name: REDIS__INSTANCE
+            value: netcore-counter-redis
+          - name: REDIS__PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis
+                key: password
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 512Mi
+            cpu: 100m

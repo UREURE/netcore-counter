@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: netcore-counter-servicemonitor-user
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      run: netcore-counter-user
+  endpoints:
+  - port: web
+    interval: 10s

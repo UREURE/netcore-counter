@@ -6,7 +6,13 @@ kubectl create secret generic redis --from-literal=password=$ARG1 --namespace=ne
 kubectl apply -f 02_redis-pvc.yaml --namespace=netcore-counter
 kubectl apply -f 03_redis-deployment.yaml --namespace=netcore-counter
 kubectl apply -f 04_redis-service.yaml --namespace=netcore-counter
-kubectl apply -f 05_counter-deployment.yaml --namespace=netcore-counter
-kubectl apply -f 06_counter-service.yaml --namespace=netcore-counter
-kubectl apply -f 07_counter-ingress.yaml --namespace=netcore-counter
-kubectl apply -f 08_counter-service-monitor.yaml --namespace=netcore-counter
+kubectl apply -f 05_counter-deployment-redis.yaml --namespace=netcore-counter
+kubectl apply -f 05_counter-deployment-next.yaml --namespace=netcore-counter
+kubectl apply -f 05_counter-deployment-user.yaml --namespace=netcore-counter
+kubectl apply -f 06_counter-service-redis.yaml --namespace=netcore-counter
+kubectl apply -f 06_counter-service-next.yaml --namespace=netcore-counter
+kubectl apply -f 06_counter-service-user.yaml --namespace=netcore-counter
+kubectl apply -f 07_counter-ingress-user.yaml --namespace=netcore-counter
+kubectl apply -f 08_counter-service-monitor-redis.yaml --namespace=netcore-counter
+kubectl apply -f 08_counter-service-monitor-next.yaml --namespace=netcore-counter
+kubectl apply -f 08_counter-service-monitor-user.yaml --namespace=netcore-counter
