@@ -58,7 +58,7 @@ spec:
           - name: COUNTER_VERSION
             value: 0.5-unstable
           - name: FEATUREMANAGEMENT__PERSISTENCIANEXTCOUNTER
-            value: "true"
+            value: "false"
           - name: NEXTCOUNTER__PROTOCOLO
             value: "http"
           - name: NEXTCOUNTER__HOST
