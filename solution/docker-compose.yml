@@ -1,5 +1,22 @@
 version: '3'
 services:
+  user-netcore-counter:
+    build: .
+    depends_on:
+      - "next-netcore-counter"
+    ports:
+      - "${USER_COUNTER_HTTP_EXT_PORT}:${COUNTER_HTTP_INT_PORT}"
+    environment:
+      - COUNTER_HTTP_INT_PORT=${COUNTER_HTTP_INT_PORT}
+      - COUNTER_VERSION=${COUNTER_VERSION}
+      - FEATUREMANAGEMENT__PERSISTENCIANEXTCOUNTER=${USER_COUNTER_FEATURE_NEXT_COUNTER}
+      - NEXTCOUNTER__PROTOCOLO=${NEXTCOUNTER_PROTOCOLO}
+      - NEXTCOUNTER__HOST=${NEXTCOUNTER_HOST_NEXT}
+      - NEXTCOUNTER__PORT=${COUNTER_HTTP_INT_PORT}
+      - REDIS__HOST=${REDIS_HOST}
+      - REDIS__PORT=${REDIS_PORT}
+      - REDIS__PASSWORD=${REDIS_PASSWORD}
+      - REDIS__INSTANCE=${REDIS_INSTANCE}
   next-netcore-counter:
     build: .
     depends_on:
