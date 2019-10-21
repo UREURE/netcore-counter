@@ -2,7 +2,6 @@
 PASSWORD=${1:-PasswordMuyMuyDificilDeAdivinar0=0}
 NAMESPACE=${2:-netcore-counter}
 
-kubectl create namespace $NAMESPACE
 kubectl create secret generic redis --from-literal=password=$PASSWORD --namespace=$NAMESPACE
 kubectl apply -f 02_redis-pvc.yaml --namespace=$NAMESPACE
 kubectl apply -f 03_redis-deployment.yaml --namespace=$NAMESPACE
