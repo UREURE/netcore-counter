@@ -5,7 +5,7 @@ metadata:
     run: netcore-counter-redis
   name: netcore-counter-redis
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       run: netcore-counter-redis

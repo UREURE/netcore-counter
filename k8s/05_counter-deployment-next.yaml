@@ -5,7 +5,7 @@ metadata:
     run: netcore-counter-next
   name: netcore-counter-next
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       run: netcore-counter-next

@@ -5,7 +5,7 @@ metadata:
     run: netcore-counter-user
   name: netcore-counter-user
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       run: netcore-counter-user
