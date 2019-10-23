@@ -78,11 +78,11 @@ namespace Counter.Web
                 };
                 Action onReset = () =>
                 {
-                    serviceProvider.GetRequiredService<ILogger>().Error($"Finalizando CircuitBreaker.");
+                    serviceProvider.GetRequiredService<ILogger>().Info($"Finalizando CircuitBreaker.");
                 };
                 AsyncCircuitBreakerPolicy breaker = Policy
                     .Handle<Exception>()
-                    .CircuitBreakerAsync(2, TimeSpan.FromMinutes(1), onBreak, onReset);
+                    .CircuitBreakerAsync(2, TimeSpan.FromSeconds(30), onBreak, onReset);
 
                 AsyncPolicy policyCache = Policy
                     .Handle<Exception>()

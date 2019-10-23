@@ -1,9 +1,6 @@
 ﻿using Counter.Web.Constantes;
-using Counter.Web.Entidades.Configuracion;
 using Counter.Web.Loggers;
-using Counter.Web.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
@@ -19,8 +16,6 @@ namespace Counter.Web.Controllers
         #region Declaraciones
 
         private readonly ILogger logger;
-        private readonly IRepositoryFactory repositoryFactory;
-        private readonly AppConfig configuracion;
 
         #endregion
 
@@ -29,27 +24,9 @@ namespace Counter.Web.Controllers
         /// <summary>
         /// Constructor básico del Controlador
         /// </summary>
-        public HealthController(ILogger logger, IOptions<AppConfig> configuracion, IRepositoryFactory repositoryFactory)
+        public HealthController(ILogger logger)
         {
             this.logger = logger;
-            this.configuracion = configuracion.Value;
-            this.repositoryFactory = repositoryFactory;
-        }
-
-        #endregion
-
-        #region Métodos Protegidos
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        protected ICounterRepository GetRepository()
-        {
-            if (configuracion != null && configuracion.IsFeaturePersistenciaNextCounterEnabled)
-                return repositoryFactory.Get(Claves.SELECTOR_PERSISTENCIA_NEXT_COUNTER);
-            else
-                return repositoryFactory.Get(Claves.SELECTOR_PERSISTENCIA_REDIS);
         }
 
         #endregion
@@ -78,8 +55,7 @@ namespace Counter.Web.Controllers
         {
             try
             {
-                await GetRepository().ObtenerContador();
-                return Ok(true);
+                return await Task.Run(() => { return Ok(true); });
             }
             catch (Exception)
             {

@@ -46,6 +46,14 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 3
           failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v1/Health/ready
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
         env:
           - name: COUNTER_VERSION
             value: "0.7-unstable - MICROSERVICIO 2"
