@@ -63,7 +63,6 @@ namespace Counter.Web.Controllers
         [ProducesResponseType(200)]
         public async Task<ActionResult<bool>> Live()
         {
-            logger.Trace($"Llamado método Live().");
             return await Task.Run(() => { return Ok(true); });
         }
 
@@ -79,7 +78,6 @@ namespace Counter.Web.Controllers
         {
             try
             {
-                logger.Trace($"Llamado método Ready().");
                 await GetRepository().ObtenerContador();
                 return Ok(true);
             }
