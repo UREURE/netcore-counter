@@ -64,5 +64,3 @@ spec:
               secretKeyRef:
                 name: {{ .Release.Name }}-redis
                 key: redis-password
-        resources:
-{{ toYaml .Values.resources | indent 10 }}
