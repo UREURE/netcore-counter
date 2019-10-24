@@ -74,7 +74,7 @@ namespace Counter.Web
 
                 Action<Exception, TimeSpan> onBreak = (exception, timespan) =>
                 {
-                    serviceProvider.GetRequiredService<ILogger>().Error($"Utilizando CircuitBreaker durante {timespan.TotalMinutes} minutos tras el error: {exception}");
+                    serviceProvider.GetRequiredService<ILogger>().Error($"Utilizando CircuitBreaker durante {timespan.TotalSeconds} segundo(s) tras el error: {exception}");
                 };
                 Action onReset = () =>
                 {
