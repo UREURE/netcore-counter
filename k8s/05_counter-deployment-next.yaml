@@ -36,7 +36,7 @@ spec:
                   - redis
               topologyKey: "kubernetes.io/hostname"
       containers:
-      - image: ureure/netcore-counter:0.7-unstable
+      - image: ureure/netcore-counter:0.8-unstable
         name: netcore-counter-next
         livenessProbe:
           httpGet:
@@ -56,7 +56,7 @@ spec:
           failureThreshold: 3
         env:
           - name: COUNTER_VERSION
-            value: "0.7-unstable - MICROSERVICIO 2"
+            value: "0.8-unstable - MICROSERVICIO 2"
           - name: FEATUREMANAGEMENT__PERSISTENCIANEXTCOUNTER
             value: "true"
           - name: NEXTCOUNTER__PROTOCOLO

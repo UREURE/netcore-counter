@@ -12,4 +12,3 @@ kubectl apply -f 05_counter-deployment-user.yaml --namespace=$NAMESPACE
 kubectl apply -f 06_counter-service-redis.yaml --namespace=$NAMESPACE
 kubectl apply -f 06_counter-service-next.yaml --namespace=$NAMESPACE
 kubectl apply -f 06_counter-service-user.yaml --namespace=$NAMESPACE
-kubectl apply -f 07_counter-ingress-user.yaml --namespace=$NAMESPACE
