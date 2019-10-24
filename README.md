@@ -127,6 +127,7 @@ Instalar *[Helm](https://helm.sh/docs/helm/)*:
 
 ```bash
 cd netcore-counter/helm
+chmod 700 *.sh
 ./helm_install.sh
 cd ../..
 ```
@@ -151,12 +152,18 @@ kubectl apply -f ./netcore-counter/nginx-ingress/mandatory.yaml
 kubectl apply -f ./netcore-counter/nginx-ingress/cloud-generic.yaml
 ```
 
+Esperar a que se se haya asginado una IP en el resultado de ejecutar la siguiente instrucción:
+
+```bash
+kubectl get services --all-namespaces | grep LoadBalancer|awk '{print $5};'
+```
+
 Crear *Ingress* del servicio *netcore-counter-user*:
 
 ```bash
 LOAD_BALANCER_IP=$(kubectl get services --all-namespaces|grep LoadBalancer|awk '{print $5};')
 sed -i "s/0.0.0.0/$LOAD_BALANCER_IP/g" ./netcore-counter/nginx-ingress/netcore-counter-ingress-user.yaml
-kubectl apply -f ./netcore-counter/nginx-ingress/netcore-counter-ingress-user.yaml
+kubectl apply -f ./netcore-counter/nginx-ingress/netcore-counter-ingress-user.yaml --namespace=netcore-counter
 ```
 
 Una vez instalada, se puede ver en qué IP está expuesta la aplicación fuera del clúster con:
@@ -167,6 +174,6 @@ kubectl get ingress netcore-counter-user --namespace=netcore-counter
 
 ![IP Ingress](./img/ip-ingress.png)
 
-La IP en la que está expuesta la aplicación fuera del clúster está en el campo *HOSTS*. Utilizando [nip.io](https://nip.io/) se puede acceder a la aplicación fácilmente fuera del clúster. En este ejemplo, está expuesta en "[http://netcore-counter.34.76.93.8.nip.io/api/v1/swagger/index.html](http://netcore-counter.34.76.93.8.nip.io/api/v1/swagger/index.html)":
+La IP en la que está expuesta la aplicación fuera del clúster está en el campo *HOSTS*. Utilizando [nip.io](https://nip.io/) se puede acceder a la aplicación fácilmente fuera del clúster. En este ejemplo, está expuesta en "[http://netcore-counter.35.233.121.27.nip.io/api/v1/swagger/index.html](http://netcore-counter.35.233.121.27.nip.io/api/v1/swagger/index.html)":
 
 ![Swagger Kubernetes](./img/swagger-kubernetes.png)
