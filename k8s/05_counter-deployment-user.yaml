@@ -2,17 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: netcore-counter
-  name: netcore-counter
+    run: netcore-counter-user
+  name: netcore-counter-user
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      run: netcore-counter
+      run: netcore-counter-user
   template:
     metadata:
       labels:
-        run: netcore-counter
+        run: netcore-counter-user
     spec:
       affinity:
         podAntiAffinity:
@@ -22,7 +22,7 @@ spec:
               - key: run
                 operator: In
                 values:
-                - netcore-counter
+                - netcore-counter-user
             topologyKey: "kubernetes.io/hostname"
         podAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -36,8 +36,8 @@ spec:
                   - redis
               topologyKey: "kubernetes.io/hostname"
       containers:
-      - image: ureure/netcore-counter:0.3-unstable
-        name: netcore-counter
+      - image: ureure/netcore-counter:0.8-unstable
+        name: netcore-counter-user
         livenessProbe:
           httpGet:
             path: /api/v1/Health/live
@@ -56,22 +56,23 @@ spec:
           failureThreshold: 3
         env:
           - name: COUNTER_VERSION
-            value: 0.3-unstable
+            value: "0.8-unstable - MICROSERVICIO 1"
+          - name: FEATUREMANAGEMENT__PERSISTENCIANEXTCOUNTER
+            value: "true"
+          - name: NEXTCOUNTER__PROTOCOLO
+            value: "http"
+          - name: NEXTCOUNTER__HOST
+            value: netcore-counter-next
+          - name: NEXTCOUNTER__PORT
+            value: "5000"
           - name: REDIS__HOST
             value: redis
           - name: REDIS__PORT
             value: "6379"
           - name: REDIS__INSTANCE
-            value: netcore-counter
+            value: netcore-counter-redis
           - name: REDIS__PASSWORD
             valueFrom:
               secretKeyRef:
                 name: redis
                 key: password
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 100m
-          limits:
-            memory: 512Mi
-            cpu: 100m

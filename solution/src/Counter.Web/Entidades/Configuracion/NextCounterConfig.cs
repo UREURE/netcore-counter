@@ -3,8 +3,13 @@
     /// <summary>
     ///
     /// </summary>
-    public class RedisConfig
+    public class NextCounterConfig
     {
+        /// <summary>
+        ///
+        /// </summary>
+        public string Protocolo { get; set; }
+
         /// <summary>
         ///
         /// </summary>
@@ -14,16 +19,6 @@
         ///
         /// </summary>
         public int? Port { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public string Instance { get; set; }
 
         /// <summary>
         ///

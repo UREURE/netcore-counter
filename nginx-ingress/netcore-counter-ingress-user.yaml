@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
-  name: netcore-counter
+  name: netcore-counter-user
 spec:
   rules:
-  - host: netcore-counter.34.76.93.8.nip.io
+  - host: netcore-counter-user.0.0.0.0.nip.io
     http:
       paths:
       - backend:
-          serviceName: netcore-counter
+          serviceName: netcore-counter-user
           servicePort: 5000

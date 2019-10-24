@@ -1,7 +1,9 @@
 ﻿using Counter.Web.Constantes;
+using Counter.Web.Entidades.Configuracion;
 using Counter.Web.Loggers;
 using Counter.Web.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
@@ -17,9 +19,8 @@ namespace Counter.Web.Controllers
         #region Declaraciones
 
         private readonly ILogger logger;
-        private readonly ICounterRepository counterRepository;
-
-        private readonly bool publicarError;
+        private readonly IRepositoryFactory repositoryFactory;
+        private readonly AppConfig configuracion;
 
         #endregion
 
@@ -29,12 +30,29 @@ namespace Counter.Web.Controllers
         /// Constructor básico del Controlador
         /// </summary>
         /// <param name="logger">Logger de la aplicación</param>
-        /// <param name="counterRepository">Instancia para las operaciones del controlador</param>
-        public CounterController(ILogger logger, ICounterRepository counterRepository)
+        /// <param name="configuracion">Configuración de la aplicación</param>
+        /// <param name="repositoryFactory">Factoría para obtener el repositorio de las operaciones del controlador</param>
+        public CounterController(ILogger logger, IOptions<AppConfig> configuracion, IRepositoryFactory repositoryFactory)
         {
             this.logger = logger;
-            this.counterRepository = counterRepository;
-            publicarError = true;
+            this.configuracion = configuracion.Value;
+            this.repositoryFactory = repositoryFactory;
+        }
+
+        #endregion
+
+        #region Métodos Protegidos
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        protected ICounterRepository GetRepository()
+        {
+            if (configuracion != null && configuracion.IsFeaturePersistenciaNextCounterEnabled)
+                return repositoryFactory.Get(Claves.SELECTOR_PERSISTENCIA_NEXT_COUNTER);
+            else
+                return repositoryFactory.Get(Claves.SELECTOR_PERSISTENCIA_REDIS);
         }
 
         #endregion
@@ -51,7 +69,7 @@ namespace Counter.Web.Controllers
             try
             {
                 logger.Trace($"Llamado método Leer().");
-                int contador = await counterRepository.ObtenerContador();
+                int contador = await GetRepository().ObtenerContador();
                 return Ok(contador);
             }
             catch (Exception ex)
@@ -73,7 +91,7 @@ namespace Counter.Web.Controllers
             try
             {
                 logger.Trace($"Llamado método Incrementar().");
-                int contador = await counterRepository.IncrementarContador();
+                int contador = await GetRepository().IncrementarContador();
                 return Ok(contador);
             }
             catch (Exception ex)
@@ -96,10 +114,8 @@ namespace Counter.Web.Controllers
             try
             {
                 logger.Trace($"Llamado método Error().");
-                if (publicarError)
-                    throw new Exception($"Error publicado, variable publicarError={publicarError}.");
-                else
-                    return await Task.Run(() => { return Ok(true); });
+                await Task.Run(() => { throw new Exception($"Error publicado."); });
+                return Ok(true);
             }
             catch (Exception ex)
             {

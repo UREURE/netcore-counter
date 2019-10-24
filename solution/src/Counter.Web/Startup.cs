@@ -8,8 +8,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog.Extensions.Logging;
+using Polly;
+using Polly.CircuitBreaker;
+using Polly.Registry;
 using Prometheus;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.IO;
 
 namespace Counter.Web
@@ -17,7 +21,15 @@ namespace Counter.Web
     internal class Startup
     {
         public const string APPSETTINGS = "appsettings.json";
+        public const string HOST_REDIS_DEFECTO = "localhost";
         public const int PUERTO_REDIS_DEFECTO = 6379;
+        public const string INSTANCIA_REDIS_DEFECTO = "netcore-counter";
+        public const int REINTENTOS_REDIS_DEFECTO = 3;
+
+        public const string PROTOCOLO_NEXT_COUNTER_DEFECTO = "http";
+        public const string HOST_NEXT_COUNTER_DEFECTO = "localhost";
+        public const int PUERTO_NEXT_COUNTER_DEFECTO = 5000;
+        public const int REINTENTOS_NEXT_COUNTER_DEFECTO = 3;
 
         private readonly AppConfig configuracion;
 
@@ -54,23 +66,54 @@ namespace Counter.Web
             ConfigureRepositories(services);
         }
 
-        public virtual void ConfigureRepositories(IServiceCollection services)
+        public virtual void AddPolicies(IServiceCollection services)
         {
-            string redisHost = "localhost";
+            services.AddSingleton<IReadOnlyPolicyRegistry<string>, PolicyRegistry>((serviceProvider) =>
+            {
+                PolicyRegistry registry = new PolicyRegistry();
+
+                Action<Exception, TimeSpan> onBreak = (exception, timespan) =>
+                {
+                    serviceProvider.GetRequiredService<ILogger>().Error($"Utilizando CircuitBreaker durante {timespan.TotalSeconds} segundo(s) tras el error: {exception}");
+                };
+                Action onReset = () =>
+                {
+                    serviceProvider.GetRequiredService<ILogger>().Info($"Finalizando CircuitBreaker.");
+                };
+                AsyncCircuitBreakerPolicy breaker = Policy
+                    .Handle<Exception>()
+                    .CircuitBreakerAsync(2, TimeSpan.FromSeconds(30), onBreak, onReset);
+
+                AsyncPolicy policyCache = Policy
+                    .Handle<Exception>()
+                    .RetryAsync(3, onRetry: (exception, retryCount) =>
+                    {
+                        serviceProvider.GetRequiredService<ILogger>().Warn($"Error en el intento {retryCount}: {exception}");
+                    })
+                    .WrapAsync(breaker);
+
+                registry.Add(Claves.CLAVE_POLITICA_CACHE, policyCache);
+                return registry;
+            });
+        }
+
+        public virtual void AddRedis(IServiceCollection services, RedisConfig configuracion)
+        {
+            string redisHost = HOST_REDIS_DEFECTO;
             int redisPort = PUERTO_REDIS_DEFECTO;
             string redisPassword = null;
-            string redisInstance = "netcore-counter";
+            string redisInstance = INSTANCIA_REDIS_DEFECTO;
 
-            if (configuracion.Redis != null)
+            if (configuracion != null)
             {
-                if (!string.IsNullOrEmpty(configuracion.Redis.Host))
-                    redisHost = configuracion.Redis.Host;
-                if (configuracion.Redis.Port.HasValue)
-                    redisPort = configuracion.Redis.Port.Value;
-                if (!string.IsNullOrEmpty(configuracion.Redis.Password))
-                    redisPassword = configuracion.Redis.Password;
-                if (!string.IsNullOrEmpty(configuracion.Redis.Instance))
-                    redisInstance = configuracion.Redis.Instance;
+                if (!string.IsNullOrEmpty(configuracion.Host))
+                    redisHost = configuracion.Host;
+                if (configuracion.Port.HasValue)
+                    redisPort = configuracion.Port.Value;
+                if (!string.IsNullOrEmpty(configuracion.Password))
+                    redisPassword = configuracion.Password;
+                if (!string.IsNullOrEmpty(configuracion.Instance))
+                    redisInstance = configuracion.Instance;
             }
             string redisConfiguration = $"{redisHost}:{redisPort}";
             if (!string.IsNullOrEmpty(redisPassword))
@@ -81,7 +124,45 @@ namespace Counter.Web
                 option.Configuration = redisConfiguration;
                 option.InstanceName = redisInstance;
             });
+        }
 
+        public virtual void AddNextCounterHttpClient(IServiceCollection services, NextCounterConfig configuracion)
+        {
+            string protocolo = PROTOCOLO_NEXT_COUNTER_DEFECTO;
+            string host = HOST_NEXT_COUNTER_DEFECTO;
+            int puerto = PUERTO_NEXT_COUNTER_DEFECTO;
+
+            if (configuracion != null)
+            {
+                if (!string.IsNullOrEmpty(configuracion.Protocolo))
+                    protocolo = configuracion.Protocolo;
+                if (!string.IsNullOrEmpty(configuracion.Host))
+                    host = configuracion.Host;
+                if (configuracion.Port.HasValue)
+                    puerto = configuracion.Port.Value;
+            }
+            string uri = $"{protocolo}://{host}:{puerto}/";
+
+            services.AddHttpClient(Claves.CLAVE_CLIENTE_HTTP_NEXT_COUNTER, client =>
+            {
+                client.BaseAddress = new Uri(uri);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+        }
+
+        public virtual void AddRepositoryFactory(IServiceCollection services)
+        {
+            services.AddSingleton<IRepositoryFactory, RepositoryFactory>((serviceProvider) =>
+            {
+                RepositoryFactory factoriaRepositorios = new RepositoryFactory();
+                factoriaRepositorios.Add(Claves.SELECTOR_PERSISTENCIA_REDIS, serviceProvider.GetRequiredService<ICounterRedisRepository>());
+                factoriaRepositorios.Add(Claves.SELECTOR_PERSISTENCIA_NEXT_COUNTER, serviceProvider.GetRequiredService<INextCounterRepository>());
+                return factoriaRepositorios;
+            });
+        }
+
+        public virtual void ConfigureRepositories(IServiceCollection services)
+        {
             services.AddScoped<ILogger, NLogLogger>();
             services.AddLogging(builder =>
             {
@@ -92,8 +173,13 @@ namespace Counter.Web
                 });
             });
 
-            // Una Instancia cada vez que resulte necesaria
-            services.AddTransient<ICounterRepository, CounterRepository>();
+            AddPolicies(services);
+
+            AddRedis(services, configuracion.Redis);
+            AddNextCounterHttpClient(services, configuracion.NextCounter);
+            services.AddSingleton<ICounterRedisRepository, CounterRedisRepository>();
+            services.AddSingleton<INextCounterRepository, NextCounterRepository>();
+            AddRepositoryFactory(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
